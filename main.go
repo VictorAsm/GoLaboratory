@@ -1,23 +1,30 @@
 package main
 
 import (
-	"GoAlgorithmLab/DataStructures/circularlinkedlist"
+	"GoLaboratory/Algorithms/pathFinding"
+	"GoLaboratory/DataStructures/graphStructure"
 	"fmt"
 )
 
 func main() {
-	list := circularlinkedlist.NewCircularLinkedList()
+	adjacencyList := map[int][]int{
+		0: {4, 2, 1},
+		1: {},
+		2: {3, 4},
+		3: {1},
+		4: {5, 2},
+		5: {1, 2},
+	}
 
-	list.Insert(10)
-	list.Insert(20)
-	list.Insert(30)
+	g := graphStructure.NewGraph(graphStructure.WithAdjacencyList(adjacencyList))
 
-	fmt.Println("Lista después de insertar:")
-	list.Print()
+	//fmt.Println("Grafo creado con los siguientes vértices y conexiones:")
+	//for Key, _ := range g.Vertices {
+	//	fmt.Printf("Vértice %d: Vecinos -> %v\n", Key, g.Neighbors(Key))
+	//}
 
-	list.Delete(20)
-	fmt.Println("Lista después de eliminar 20:")
-	list.Print()
+	fmt.Println("BFS Result")
+	pathBFS := pathFinding.BFS(g, 0)
 
-	fmt.Println("Es circular?", list.IsCircular())
+	fmt.Printf("Key %v\n", pathBFS)
 }
