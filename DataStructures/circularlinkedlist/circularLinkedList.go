@@ -1,96 +1,81 @@
 package circularlinkedlist
 
-import "fmt"
-
-type Node struct {
-	key  int
-	next *Node
-	prev *Node
-}
+import (
+	"GoLaboratory/DataStructures/node"
+	"fmt"
+)
 
 type CircularLinkedList struct {
-	size int
-	head *Node
-	tail *Node
+	sentinel *node.Node
+	size     int
 }
 
 func NewCircularLinkedList() *CircularLinkedList {
-	head := &Node{key: 0}
-	tail := &Node{key: 0}
+	sentinel := &node.Node{}
 
-	head.next = tail
-	head.prev = tail
-
-	tail.prev = head
-	tail.next = head
+	sentinel.Next = sentinel
+	sentinel.Prev = sentinel
 
 	return &CircularLinkedList{
-		size: 0,
-		head: head,
-		tail: tail,
+		sentinel: sentinel,
+		size:     0,
 	}
 }
 
-func (dbl *CircularLinkedList) Search(key int) *Node {
-	x := dbl.head.next
+func (cll *CircularLinkedList) Search(key int) *node.Node {
+	x := cll.sentinel.Next
 
-	if x == dbl.tail {
+	if x == cll.sentinel {
 		return nil
 	}
 
-	for x != dbl.tail && x.key != key {
-		x = x.next
+	for x != cll.sentinel && x.Key != key {
+		x = x.Next
 	}
 	return x
 }
 
-func (dbl *CircularLinkedList) Insert(value int) {
-	node := &Node{key: value}
-	x := dbl.tail.prev
+func (cll *CircularLinkedList) Insert(value int) {
+	node := &node.Node{Key: value}
+	x := cll.sentinel.Prev
 
-	node.prev = x
-	node.next = dbl.tail
-	x.next = node
+	node.Prev = x
+	node.Next = cll.sentinel
+	x.Next = node
 
-	dbl.tail.prev = node
-	dbl.size++
+	cll.sentinel.Prev = node
+	cll.size++
 }
 
-func (dbl *CircularLinkedList) Delete(value int) {
-	x := dbl.head.next
-
-	for x != dbl.tail && x.key != value {
-		x = x.next
-	}
-
-	if x == dbl.tail {
+func (cll *CircularLinkedList) Delete(node *node.Node) {
+	if node == nil || node == cll.sentinel {
 		return
 	}
 
-	x.prev.next = x.next
-	x.next.prev = x.prev
-	dbl.size--
+	node.Prev.Next = node.Next
+	node.Next.Prev = node.Prev
+	cll.size--
 }
 
-func (dbl *CircularLinkedList) Print() {
-	if dbl.size == 0 {
+func (cll *CircularLinkedList) Print() {
+	if cll.size == 0 {
 		fmt.Println("Empty list")
+		return
 	}
 
-	x := dbl.head.next
-	i := 0
-
-	for x != dbl.tail {
-		fmt.Printf("[p: %d | v: %d] => ", i, x.key)
-		i++
-		x = x.next
+	x := cll.sentinel.Next
+	for x != cll.sentinel {
+		fmt.Printf("[ %d ] -> ", x.Key)
+		x = x.Next
 	}
+	fmt.Println("[ SENTINEL ]")
 }
 
-func (dbl *CircularLinkedList) Size() int {
-	return dbl.size
+func (cll *CircularLinkedList) Size() int {
+	return cll.size
 }
 
-func (dbl *CircularLinkedList) IsCircular() bool {
-	return dbl.tail.next == dbl.head && dbl.head.prev == dbl.tail
+func (cll *CircularLinkedList) IsCircular() bool {
+	return cll.sentinel.Next != nil && cll.sentinel.Prev != nil &&
+		cll.sentinel.Next.Prev == cll.sentinel.Prev.Next
 }
